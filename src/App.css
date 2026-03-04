@@ -1,0 +1,71 @@
+/* Layout */
+.page { max-width: 900px; margin: 0 auto; padding: 2rem 1rem; }
+.page-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; }
+.page-header h1 { margin: 0; }
+
+/* Navbar */
+.navbar { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1.5rem; background: #1e293b; color: #f1f5f9; position: sticky; top: 0; z-index: 10; }
+.nav-brand { font-weight: 700; font-size: 1.1rem; }
+.nav-right { display: flex; align-items: center; gap: 1rem; }
+.nav-user { font-size: 0.85rem; opacity: 0.8; }
+
+/* Buttons */
+.btn { border: none; border-radius: 6px; padding: 0.5rem 1rem; cursor: pointer; font-size: 0.9rem; font-weight: 500; transition: background 0.2s; }
+.btn.primary { background: #3b82f6; color: #fff; }
+.btn.primary:hover { background: #2563eb; }
+.btn.small { padding: 0.35rem 0.75rem; font-size: 0.8rem; background: #334155; color: #f1f5f9; }
+.btn.small:hover { background: #475569; }
+.btn.small.active { background: #3b82f6; color: #fff; }
+
+/* Login */
+.subtitle { text-align: center; opacity: 0.7; margin-bottom: 2rem; }
+.user-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+.user-card { display: flex; flex-direction: column; gap: 0.25rem; padding: 1.25rem; border-radius: 10px; border: 2px solid transparent; cursor: pointer; text-align: left; transition: all 0.2s; }
+.user-card:hover { transform: translateY(-2px); }
+.user-card.user { background: #eff6ff; border-color: #93c5fd; color: #1e3a5f; }
+.user-card.admin { background: #fef3c7; border-color: #fbbf24; color: #78350f; }
+.user-card.tech { background: #ecfdf5; border-color: #6ee7b7; color: #064e3b; }
+.user-name { font-weight: 600; font-size: 1rem; }
+.user-role { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.7; }
+
+/* Ticket Form */
+.ticket-form { display: flex; flex-direction: column; gap: 1rem; background: #1e293b; padding: 1.5rem; border-radius: 10px; margin-bottom: 1.5rem; }
+.ticket-form label { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.85rem; font-weight: 500; }
+.ticket-form input, .ticket-form select, .ticket-form textarea { padding: 0.6rem; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: #f1f5f9; font-size: 0.9rem; font-family: inherit; }
+.ticket-form textarea { resize: vertical; }
+
+/* Ticket Cards */
+.ticket-list { display: flex; flex-direction: column; gap: 1rem; }
+.ticket-card { background: #1e293b; border-radius: 10px; padding: 1.25rem; }
+.ticket-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+.ticket-category { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; background: #334155; padding: 0.2rem 0.6rem; border-radius: 4px; }
+.ticket-card h3 { margin: 0 0 0.5rem; font-size: 1.05rem; }
+.ticket-card p { margin: 0 0 0.75rem; font-size: 0.9rem; opacity: 0.8; line-height: 1.5; }
+.ticket-meta { display: flex; gap: 1rem; font-size: 0.8rem; opacity: 0.6; flex-wrap: wrap; }
+
+/* Status Badges */
+.badge { font-size: 0.75rem; padding: 0.2rem 0.6rem; border-radius: 999px; font-weight: 600; text-transform: capitalize; }
+.badge.open { background: #fbbf24; color: #78350f; }
+.badge.assigned { background: #60a5fa; color: #1e3a5f; }
+.badge.in-progress { background: #a78bfa; color: #2e1065; }
+.badge.completed { background: #34d399; color: #064e3b; }
+
+/* Assign Row */
+.assign-row { margin-top: 0.75rem; }
+.assign-row select { padding: 0.4rem; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: #f1f5f9; font-size: 0.85rem; }
+.assigned-to { font-size: 0.85rem; color: #60a5fa; }
+
+/* Stats */
+.stats-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+.stat-card { background: #1e293b; border-radius: 10px; padding: 1rem; text-align: center; display: flex; flex-direction: column; gap: 0.25rem; }
+.stat-num { font-size: 1.8rem; font-weight: 700; }
+.stat-label { font-size: 0.8rem; text-transform: uppercase; opacity: 0.6; }
+.stat-card.open .stat-num { color: #fbbf24; }
+.stat-card.assigned .stat-num { color: #60a5fa; }
+.stat-card.completed .stat-num { color: #34d399; }
+
+/* Filter Bar */
+.filter-bar { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+/* Empty State */
+.empty { text-align: center; opacity: 0.5; padding: 3rem 0; }
