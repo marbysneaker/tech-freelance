@@ -1,10 +1,13 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
+import type { ReactNode } from 'react';
 import type { User, Ticket } from '../types';
 
 interface AppState {
   currentUser: User | null;
   users: User[];
   tickets: Ticket[];
+  darkMode: boolean;
+  toggleDarkMode: () => void;
   login: (user: User) => void;
   logout: () => void;
   addTicket: (ticket: Omit<Ticket, 'id' | 'createdAt' | 'updatedAt' | 'status'>) => void;
@@ -35,11 +38,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [currentUser, setCurrentUser] = useState<User | null>(() => loadState('currentUser', null));
   const [users] = useState<User[]>(() => loadState('users', SEED_USERS));
   const [tickets, setTickets] = useState<Ticket[]>(() => loadState('tickets', []));
+  const [darkMode, setDarkMode] = useState<boolean>(() => loadState('darkMode', true));
 
   useEffect(() => { localStorage.setItem('currentUser', JSON.stringify(currentUser)); }, [currentUser]);
   useEffect(() => { localStorage.setItem('tickets', JSON.stringify(tickets)); }, [tickets]);
   useEffect(() => { localStorage.setItem('users', JSON.stringify(users)); }, [users]);
+  useEffect(() => {
+    localStorage.setItem('darkMode', JSON.stringify(darkMode));
+    document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+  }, [darkMode]);
 
+
+  const toggleDarkMode = () => setDarkMode(prev => !prev);
   const login = (user: User) => setCurrentUser(user);
   const logout = () => setCurrentUser(null);
 
@@ -74,7 +84,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AppContext.Provider value={{ currentUser, users, tickets, login, logout, addTicket, assignTicket, claimTicket, updateTicketStatus }}>
+    <AppContext.Provider value={{ currentUser, users, tickets, darkMode, toggleDarkMode, login, logout, addTicket, assignTicket, claimTicket, updateTicketStatus }}>
       {children}
     </AppContext.Provider>
   );
