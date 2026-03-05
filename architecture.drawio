@@ -1,0 +1,182 @@
+<mxfile host="app.diagrams.net" modified="2024-01-01T00:00:00.000Z" agent="Kiro" version="21.0.0">
+  <diagram name="Tech Freelance Architecture" id="arch-diagram">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ===== BACKGROUND SWIMLANES ===== -->
+
+        <!-- Frontend Zone -->
+        <mxCell id="zone-frontend" value="Frontend (React + Vite)" style="swimlane;startSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;align=left;swimlaneLine=1;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="400" height="340" as="geometry" />
+        </mxCell>
+
+        <!-- AWS Cloud Zone -->
+        <mxCell id="zone-aws" value="AWS Cloud" style="swimlane;startSize=30;fillColor=#f5f5f5;strokeColor=#FF9900;fontStyle=1;fontSize=13;align=left;swimlaneLine=1;rounded=1;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="500" y="40" width="1100" height="1060" as="geometry" />
+        </mxCell>
+
+        <!-- Amplify sub-zone -->
+        <mxCell id="zone-amplify" value="AWS Amplify Hosting" style="swimlane;startSize=25;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=11;rounded=1;" vertex="1" parent="zone-aws">
+          <mxGeometry x="20" y="50" width="200" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- Cognito sub-zone -->
+        <mxCell id="zone-cognito" value="Amazon Cognito" style="swimlane;startSize=25;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=11;rounded=1;" vertex="1" parent="zone-aws">
+          <mxGeometry x="260" y="50" width="220" height="200" as="geometry" />
+        </mxCell>
+
+        <!-- API sub-zone -->
+        <mxCell id="zone-api" value="API Gateway" style="swimlane;startSize=25;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=11;rounded=1;" vertex="1" parent="zone-aws">
+          <mxGeometry x="530" y="50" width="200" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- Lambda sub-zone -->
+        <mxCell id="zone-lambda" value="AWS Lambda" style="swimlane;startSize=25;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=11;rounded=1;" vertex="1" parent="zone-aws">
+          <mxGeometry x="530" y="200" width="480" height="380" as="geometry" />
+        </mxCell>
+
+        <!-- DynamoDB sub-zone -->
+        <mxCell id="zone-dynamo" value="Amazon DynamoDB" style="swimlane;startSize=25;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;rounded=1;" vertex="1" parent="zone-aws">
+          <mxGeometry x="530" y="640" width="480" height="360" as="geometry" />
+        </mxCell>
+
+        <!-- ===== FRONTEND COMPONENTS ===== -->
+
+        <!-- User Dashboard -->
+        <mxCell id="user-dash" value="User Dashboard&#xa;(Post Work Orders)" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" vertex="1" parent="zone-frontend">
+          <mxGeometry x="20" y="60" width="160" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Tech Dashboard -->
+        <mxCell id="tech-dash" value="Tech Dashboard&#xa;(Marketplace / Claim Jobs)" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=11;" vertex="1" parent="zone-frontend">
+          <mxGeometry x="220" y="60" width="160" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Admin Dashboard -->
+        <mxCell id="admin-dash" value="Admin Dashboard&#xa;(Oversight)" style="rounded=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=11;" vertex="1" parent="zone-frontend">
+          <mxGeometry x="120" y="160" width="160" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- App Context -->
+        <mxCell id="app-ctx" value="AppContext&#xa;(React Context / State)" style="rounded=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=2;fontSize=10;" vertex="1" parent="zone-frontend">
+          <mxGeometry x="120" y="260" width="160" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ===== AMPLIFY ===== -->
+        <mxCell id="amplify" value="Amplify Hosting&#xa;(Static Site)" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.amplify;fillColor=#E7157B;strokeColor=none;fontColor=#ffffff;fontStyle=1;fontSize=10;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-amplify">
+          <mxGeometry x="75" y="35" width="50" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ===== COGNITO ===== -->
+        <mxCell id="cognito-pool" value="User Pool&#xa;(Email Auth)" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cognito;fillColor=#BF0816;strokeColor=none;fontColor=#ffffff;fontStyle=1;fontSize=10;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-cognito">
+          <mxGeometry x="75" y="35" width="50" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="group-user" value="Group: user" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=9;" vertex="1" parent="zone-cognito">
+          <mxGeometry x="20" y="130" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="group-tech" value="Group: tech" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;" vertex="1" parent="zone-cognito">
+          <mxGeometry x="110" y="130" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="group-admin" value="Group: admin" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;" vertex="1" parent="zone-cognito">
+          <mxGeometry x="65" y="165" width="80" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- ===== API GATEWAY ===== -->
+        <mxCell id="apigw" value="REST API&#xa;(Cognito Authorizer)" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.api_gateway;fillColor=#E7157B;strokeColor=none;fontColor=#ffffff;fontStyle=1;fontSize=10;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-api">
+          <mxGeometry x="75" y="30" width="50" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ===== LAMBDA FUNCTIONS ===== -->
+        <mxCell id="fn-create" value="POST /tickets&#xa;create.ts" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;fontStyle=1;" vertex="1" parent="zone-lambda">
+          <mxGeometry x="20" y="50" width="130" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="fn-list" value="GET /tickets&#xa;list.ts" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;fontStyle=1;" vertex="1" parent="zone-lambda">
+          <mxGeometry x="170" y="50" width="130" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="fn-get" value="GET /tickets/{id}&#xa;get.ts" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;fontStyle=1;" vertex="1" parent="zone-lambda">
+          <mxGeometry x="320" y="50" width="130" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="fn-update" value="PATCH /tickets/{id}&#xa;update.ts" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;fontStyle=1;" vertex="1" parent="zone-lambda">
+          <mxGeometry x="20" y="150" width="130" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="fn-users" value="GET /users&#xa;list.ts" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;fontStyle=1;" vertex="1" parent="zone-lambda">
+          <mxGeometry x="170" y="150" width="130" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- IAM note -->
+        <mxCell id="iam-note" value="IAM: least-privilege per function&#xa;(grantReadData / grantReadWriteData)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=9;fontStyle=2;" vertex="1" parent="zone-lambda">
+          <mxGeometry x="20" y="280" width="440" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- ===== DYNAMODB TABLES ===== -->
+        <mxCell id="tbl-tickets" value="tech-freelance-tickets&#xa;PK: id&#xa;GSI: status-index&#xa;GSI: submittedBy-index&#xa;GSI: assignedTo-index" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.dynamodb;fillColor=#3F8624;strokeColor=none;fontColor=#ffffff;fontStyle=1;fontSize=10;labelPosition=right;verticalLabelPosition=middle;verticalAlign=middle;align=left;spacingLeft=5;" vertex="1" parent="zone-dynamo">
+          <mxGeometry x="60" y="80" width="50" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="tbl-users" value="tech-freelance-users&#xa;PK: id&#xa;GSI: role-index" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.dynamodb;fillColor=#3F8624;strokeColor=none;fontColor=#ffffff;fontStyle=1;fontSize=10;labelPosition=right;verticalLabelPosition=middle;verticalAlign=middle;align=left;spacingLeft=5;" vertex="1" parent="zone-dynamo">
+          <mxGeometry x="280" y="80" width="50" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ===== CONNECTIONS ===== -->
+
+        <!-- Frontend → Amplify -->
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;" edge="1" source="user-dash" target="amplify" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Frontend → Cognito (auth) -->
+        <mxCell id="e2" value="Login / JWT" style="edgeStyle=orthogonalEdgeStyle;rounded=0;dashed=1;strokeColor=#b85450;" edge="1" source="app-ctx" target="cognito-pool" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Frontend → API Gateway -->
+        <mxCell id="e3" value="HTTPS + JWT" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#82b366;fontStyle=1;" edge="1" source="app-ctx" target="apigw" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Cognito → API Gateway (authorizer) -->
+        <mxCell id="e4" value="Validate JWT" style="edgeStyle=orthogonalEdgeStyle;rounded=0;dashed=1;strokeColor=#b85450;" edge="1" source="cognito-pool" target="apigw" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- API Gateway → Lambdas -->
+        <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#9673a6;" edge="1" source="apigw" target="fn-create" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#9673a6;" edge="1" source="apigw" target="fn-list" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#9673a6;" edge="1" source="apigw" target="fn-get" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#9673a6;" edge="1" source="apigw" target="fn-update" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#9673a6;" edge="1" source="apigw" target="fn-users" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Lambdas → DynamoDB -->
+        <mxCell id="e10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#3F8624;" edge="1" source="fn-create" target="tbl-tickets" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#3F8624;" edge="1" source="fn-list" target="tbl-tickets" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#3F8624;" edge="1" source="fn-get" target="tbl-tickets" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#3F8624;" edge="1" source="fn-update" target="tbl-tickets" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#3F8624;" edge="1" source="fn-users" target="tbl-users" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
