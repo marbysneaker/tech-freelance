@@ -53,7 +53,7 @@ export class Api extends Construct {
       tables: dynamodb.Table[],
       readOnly = false,
     ) => {
-      const fn = new lambda.Function(this, `${method}${handler}Fn`, {
+      const fn = new lambda.Function(this, `${method}${handlerPath}${handler}Fn`, {
         runtime: lambda.Runtime.NODEJS_20_X,
         timeout: Duration.seconds(10),
         environment: commonEnv,

@@ -9,7 +9,7 @@ export class BackendStack extends cdk.Stack {
     super(scope, id, props);
 
     const db = new Database(this, 'Database');
-    const auth = new Auth(this, 'Auth');
+    const auth = new Auth(this, 'Auth', { usersTable: db.usersTable });
     const api = new Api(this, 'Api', {
       ticketsTable: db.ticketsTable,
       usersTable: db.usersTable,

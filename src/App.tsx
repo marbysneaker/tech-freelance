@@ -9,7 +9,8 @@ import type { Role } from './types';
 import './App.css';
 
 function ProtectedRoute({ role, children }: { role: Role; children: React.ReactNode }) {
-  const { currentUser } = useApp();
+  const { currentUser, loading } = useApp();
+  if (loading) return null;
   if (!currentUser) return <Navigate to="/" />;
   if (currentUser.role !== role) return <Navigate to="/" />;
   return <>{children}</>;

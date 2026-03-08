@@ -1,13 +1,40 @@
 import { Construct } from 'constructs';
 import * as cognito from 'aws-cdk-lib/aws-cognito';
-import { RemovalPolicy } from 'aws-cdk-lib';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
+import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
+import * as iam from 'aws-cdk-lib/aws-iam';
+import { RemovalPolicy, Duration } from 'aws-cdk-lib';
+import * as path from 'path';
+
+interface AuthProps {
+  usersTable: dynamodb.Table;
+}
 
 export class Auth extends Construct {
   public readonly userPool: cognito.UserPool;
   public readonly userPoolClient: cognito.UserPoolClient;
 
-  constructor(scope: Construct, id: string) {
+  constructor(scope: Construct, id: string, props: AuthProps) {
     super(scope, id);
+
+    const { usersTable } = props;
+
+    // Post-confirmation trigger: writes new user into DynamoDB and assigns group
+    const postConfirmFn = new lambda.Function(this, 'PostConfirmFn', {
+      runtime: lambda.Runtime.NODEJS_20_X,
+      timeout: Duration.seconds(10),
+      environment: { USERS_TABLE: usersTable.tableName },
+      code: lambda.Code.fromAsset(path.join(__dirname, '../../lambda/cognito')),
+      handler: 'post-confirmation.handler',
+    });
+
+    usersTable.grantReadWriteData(postConfirmFn);
+
+    // Allow the Lambda to add users to Cognito groups
+    postConfirmFn.addToRolePolicy(new iam.PolicyStatement({
+      actions: ['cognito-idp:AdminAddUserToGroup'],
+      resources: ['*'],
+    }));
 
     this.userPool = new cognito.UserPool(this, 'UserPool', {
       userPoolName: 'tech-freelance-users',
@@ -18,7 +45,6 @@ export class Auth extends Construct {
         fullname: { required: true, mutable: true },
       },
       customAttributes: {
-        // role stored as a custom attribute: user | admin | tech
         role: new cognito.StringAttribute({ mutable: true }),
       },
       passwordPolicy: {
@@ -27,6 +53,9 @@ export class Auth extends Construct {
         requireUppercase: true,
         requireDigits: true,
         requireSymbols: false,
+      },
+      lambdaTriggers: {
+        postConfirmation: postConfirmFn,
       },
       removalPolicy: RemovalPolicy.DESTROY,
     });
@@ -57,7 +86,7 @@ export class Auth extends Construct {
         userPassword: true,
         userSrp: true,
       },
-      generateSecret: false, // web clients don't use a secret
+      generateSecret: false,
     });
   }
 }

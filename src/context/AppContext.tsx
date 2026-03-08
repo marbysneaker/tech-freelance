@@ -1,90 +1,149 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import type { ReactNode } from 'react';
-import type { User, Ticket } from '../types';
+import type { User, Ticket, Role } from '../types';
+import { signIn, signOut, restoreSession } from '../lib/auth';
+import { ticketsApi, usersApi } from '../lib/api';
 
 interface AppState {
   currentUser: User | null;
   users: User[];
   tickets: Ticket[];
   darkMode: boolean;
+  loading: boolean;
   toggleDarkMode: () => void;
-  login: (user: User) => void;
+  login: (email: string, password: string) => Promise<Role>;
   logout: () => void;
-  addTicket: (ticket: Omit<Ticket, 'id' | 'createdAt' | 'updatedAt' | 'status'>) => void;
-  assignTicket: (ticketId: string, techId: string) => void;
-  claimTicket: (ticketId: string) => void;
-  updateTicketStatus: (ticketId: string, status: Ticket['status']) => void;
+  addTicket: (data: Omit<Ticket, 'id' | 'createdAt' | 'updatedAt' | 'status'>) => Promise<void>;
+  assignTicket: (ticketId: string, techId: string) => Promise<void>;
+  claimTicket: (ticketId: string) => Promise<void>;
+  updateTicketStatus: (ticketId: string, status: Ticket['status']) => Promise<void>;
+  refreshTickets: () => Promise<void>;
 }
 
 const AppContext = createContext<AppState | null>(null);
 
-const SEED_USERS: User[] = [
-  { id: '1', name: 'John Customer', role: 'user' },
-  { id: '2', name: 'Sarah Admin', role: 'admin' },
-  { id: '3', name: 'Mike Tech', role: 'tech' },
-  { id: '4', name: 'Lisa Tech', role: 'tech' },
-];
-
-function loadState<T>(key: string, fallback: T): T {
+function loadDarkMode(): boolean {
   try {
-    const raw = localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : fallback;
+    const raw = localStorage.getItem('darkMode');
+    return raw ? JSON.parse(raw) : true;
   } catch {
-    return fallback;
+    return true;
   }
 }
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [currentUser, setCurrentUser] = useState<User | null>(() => loadState('currentUser', null));
-  const [users] = useState<User[]>(() => loadState('users', SEED_USERS));
-  const [tickets, setTickets] = useState<Ticket[]>(() => loadState('tickets', []));
-  const [darkMode, setDarkMode] = useState<boolean>(() => loadState('darkMode', true));
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [accessToken, setAccessToken] = useState<string>('');
+  const [users, setUsers] = useState<User[]>([]);
+  const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [darkMode, setDarkMode] = useState<boolean>(loadDarkMode);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => { localStorage.setItem('currentUser', JSON.stringify(currentUser)); }, [currentUser]);
-  useEffect(() => { localStorage.setItem('tickets', JSON.stringify(tickets)); }, [tickets]);
-  useEffect(() => { localStorage.setItem('users', JSON.stringify(users)); }, [users]);
+  // Apply theme
   useEffect(() => {
     localStorage.setItem('darkMode', JSON.stringify(darkMode));
     document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
   }, [darkMode]);
 
+  // Restore Cognito session on mount
+  useEffect(() => {
+    restoreSession().then((authUser) => {
+      if (authUser) {
+        setCurrentUser({ id: authUser.id, name: authUser.name, role: authUser.role });
+        setAccessToken(authUser.accessToken);
+      }
+      setLoading(false);
+    });
+  }, []);
 
-  const toggleDarkMode = () => setDarkMode(prev => !prev);
-  const login = (user: User) => setCurrentUser(user);
-  const logout = () => setCurrentUser(null);
+  // Fetch data when user logs in
+  useEffect(() => {
+    if (!currentUser || !accessToken) return;
 
-  const addTicket = (data: Omit<Ticket, 'id' | 'createdAt' | 'updatedAt' | 'status'>) => {
-    const now = new Date().toISOString();
-    setTickets(prev => [...prev, {
-      ...data,
-      id: crypto.randomUUID(),
-      status: 'open',
-      createdAt: now,
-      updatedAt: now,
-    }]);
+    const fetchData = async () => {
+      try {
+        const [ticketData, userData] = await Promise.all([
+          ticketsApi.list(accessToken),
+          usersApi.list(accessToken),
+        ]);
+        setTickets(ticketData);
+        setUsers(userData);
+      } catch (err) {
+        console.error('Failed to load data:', err);
+      }
+    };
+
+    fetchData();
+  }, [currentUser, accessToken]);
+
+  const toggleDarkMode = () => setDarkMode((prev) => !prev);
+
+  const login = async (email: string, password: string): Promise<Role> => {
+    const authUser = await signIn(email, password);
+    setCurrentUser({ id: authUser.id, name: authUser.name, role: authUser.role });
+    setAccessToken(authUser.accessToken);
+    return authUser.role;
   };
 
-  const assignTicket = (ticketId: string, techId: string) => {
-    setTickets(prev => prev.map(t =>
-      t.id === ticketId ? { ...t, assignedTo: techId, status: 'assigned', updatedAt: new Date().toISOString() } : t
-    ));
+  const logout = () => {
+    signOut();
+    setCurrentUser(null);
+    setAccessToken('');
+    setTickets([]);
+    setUsers([]);
   };
 
-  const claimTicket = (ticketId: string) => {
+  const refreshTickets = useCallback(async () => {
+    if (!accessToken) return;
+    const data = await ticketsApi.list(accessToken);
+    setTickets(data);
+  }, [accessToken]);
+
+  const addTicket = async (data: Omit<Ticket, 'id' | 'createdAt' | 'updatedAt' | 'status'>) => {
+    const created = await ticketsApi.create(accessToken, data);
+    setTickets((prev) => [...prev, created]);
+  };
+
+  const assignTicket = async (ticketId: string, techId: string) => {
+    const updated = await ticketsApi.update(accessToken, ticketId, {
+      status: 'assigned',
+      assignedTo: techId,
+    });
+    setTickets((prev) => prev.map((t) => (t.id === ticketId ? updated : t)));
+  };
+
+  const claimTicket = async (ticketId: string) => {
     if (!currentUser) return;
-    setTickets(prev => prev.map(t =>
-      t.id === ticketId ? { ...t, assignedTo: currentUser.id, status: 'assigned', updatedAt: new Date().toISOString() } : t
-    ));
+    const updated = await ticketsApi.update(accessToken, ticketId, {
+      status: 'assigned',
+      assignedTo: currentUser.id,
+    });
+    setTickets((prev) => prev.map((t) => (t.id === ticketId ? updated : t)));
   };
 
-  const updateTicketStatus = (ticketId: string, status: Ticket['status']) => {
-    setTickets(prev => prev.map(t =>
-      t.id === ticketId ? { ...t, status, updatedAt: new Date().toISOString() } : t
-    ));
+  const updateTicketStatus = async (ticketId: string, status: Ticket['status']) => {
+    const updated = await ticketsApi.update(accessToken, ticketId, { status });
+    setTickets((prev) => prev.map((t) => (t.id === ticketId ? updated : t)));
   };
 
   return (
-    <AppContext.Provider value={{ currentUser, users, tickets, darkMode, toggleDarkMode, login, logout, addTicket, assignTicket, claimTicket, updateTicketStatus }}>
+    <AppContext.Provider
+      value={{
+        currentUser,
+        users,
+        tickets,
+        darkMode,
+        loading,
+        toggleDarkMode,
+        login,
+        logout,
+        addTicket,
+        assignTicket,
+        claimTicket,
+        updateTicketStatus,
+        refreshTickets,
+      }}
+    >
       {children}
     </AppContext.Provider>
   );
