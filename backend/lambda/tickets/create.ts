@@ -4,13 +4,14 @@ import { DynamoDBDocumentClient, PutCommand } from '@aws-sdk/lib-dynamodb';
 import { randomUUID } from 'crypto';
 
 const client = DynamoDBDocumentClient.from(new DynamoDBClient({}));
+const CORS = { 'Access-Control-Allow-Origin': '*' };
 
 export const handler: APIGatewayProxyHandler = async (event) => {
   const body = JSON.parse(event.body ?? '{}');
   const { title, description, category, location, submittedBy } = body;
 
   if (!title || !description || !category || !location || !submittedBy) {
-    return { statusCode: 400, body: JSON.stringify({ message: 'Missing required fields' }) };
+    return { statusCode: 400, headers: CORS, body: JSON.stringify({ message: 'Missing required fields' }) };
   }
 
   const now = new Date().toISOString();
@@ -31,5 +32,5 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     Item: ticket,
   }));
 
-  return { statusCode: 201, body: JSON.stringify(ticket) };
+  return { statusCode: 201, headers: CORS, body: JSON.stringify(ticket) };
 };

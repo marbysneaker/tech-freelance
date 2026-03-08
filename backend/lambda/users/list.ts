@@ -3,6 +3,7 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient, ScanCommand, QueryCommand } from '@aws-sdk/lib-dynamodb';
 
 const client = DynamoDBDocumentClient.from(new DynamoDBClient({}));
+const CORS = { 'Access-Control-Allow-Origin': '*' };
 
 export const handler: APIGatewayProxyHandler = async (event) => {
   const { role } = event.queryStringParameters ?? {};
@@ -23,5 +24,5 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     items = result.Items;
   }
 
-  return { statusCode: 200, body: JSON.stringify(items ?? []) };
+  return { statusCode: 200, headers: CORS, body: JSON.stringify(items ?? []) };
 };

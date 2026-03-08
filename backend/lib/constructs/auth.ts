@@ -1,6 +1,7 @@
 import { Construct } from 'constructs';
 import * as cognito from 'aws-cdk-lib/aws-cognito';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
+import * as lambdaNodejs from 'aws-cdk-lib/aws-lambda-nodejs';
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { RemovalPolicy, Duration } from 'aws-cdk-lib';
@@ -20,12 +21,12 @@ export class Auth extends Construct {
     const { usersTable } = props;
 
     // Post-confirmation trigger: writes new user into DynamoDB and assigns group
-    const postConfirmFn = new lambda.Function(this, 'PostConfirmFn', {
+    const postConfirmFn = new lambdaNodejs.NodejsFunction(this, 'PostConfirmFn', {
       runtime: lambda.Runtime.NODEJS_20_X,
       timeout: Duration.seconds(10),
       environment: { USERS_TABLE: usersTable.tableName },
-      code: lambda.Code.fromAsset(path.join(__dirname, '../../lambda/cognito')),
-      handler: 'post-confirmation.handler',
+      entry: path.join(__dirname, '../../lambda/cognito/post-confirmation.ts'),
+      handler: 'handler',
     });
 
     usersTable.grantReadWriteData(postConfirmFn);

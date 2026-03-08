@@ -33,7 +33,7 @@ function loadDarkMode(): boolean {
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [accessToken, setAccessToken] = useState<string>('');
+  const [idToken, setAccessToken] = useState<string>('');
   const [users, setUsers] = useState<User[]>([]);
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [darkMode, setDarkMode] = useState<boolean>(loadDarkMode);
@@ -50,7 +50,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     restoreSession().then((authUser) => {
       if (authUser) {
         setCurrentUser({ id: authUser.id, name: authUser.name, role: authUser.role });
-        setAccessToken(authUser.accessToken);
+        setAccessToken(authUser.idToken);
       }
       setLoading(false);
     });
@@ -58,13 +58,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   // Fetch data when user logs in
   useEffect(() => {
-    if (!currentUser || !accessToken) return;
+    if (!currentUser || !idToken) return;
 
     const fetchData = async () => {
       try {
         const [ticketData, userData] = await Promise.all([
-          ticketsApi.list(accessToken),
-          usersApi.list(accessToken),
+          ticketsApi.list(idToken),
+          usersApi.list(idToken),
         ]);
         setTickets(ticketData);
         setUsers(userData);
@@ -74,14 +74,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
     };
 
     fetchData();
-  }, [currentUser, accessToken]);
+  }, [currentUser, idToken]);
 
   const toggleDarkMode = () => setDarkMode((prev) => !prev);
 
   const login = async (email: string, password: string): Promise<Role> => {
     const authUser = await signIn(email, password);
     setCurrentUser({ id: authUser.id, name: authUser.name, role: authUser.role });
-    setAccessToken(authUser.accessToken);
+    setAccessToken(authUser.idToken);
     return authUser.role;
   };
 
@@ -94,18 +94,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
   };
 
   const refreshTickets = useCallback(async () => {
-    if (!accessToken) return;
-    const data = await ticketsApi.list(accessToken);
+    if (!idToken) return;
+    const data = await ticketsApi.list(idToken);
     setTickets(data);
-  }, [accessToken]);
+  }, [idToken]);
 
   const addTicket = async (data: Omit<Ticket, 'id' | 'createdAt' | 'updatedAt' | 'status'>) => {
-    const created = await ticketsApi.create(accessToken, data);
+    const created = await ticketsApi.create(idToken, data);
     setTickets((prev) => [...prev, created]);
   };
 
   const assignTicket = async (ticketId: string, techId: string) => {
-    const updated = await ticketsApi.update(accessToken, ticketId, {
+    const updated = await ticketsApi.update(idToken, ticketId, {
       status: 'assigned',
       assignedTo: techId,
     });
@@ -114,7 +114,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const claimTicket = async (ticketId: string) => {
     if (!currentUser) return;
-    const updated = await ticketsApi.update(accessToken, ticketId, {
+    const updated = await ticketsApi.update(idToken, ticketId, {
       status: 'assigned',
       assignedTo: currentUser.id,
     });
@@ -122,7 +122,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   };
 
   const updateTicketStatus = async (ticketId: string, status: Ticket['status']) => {
-    const updated = await ticketsApi.update(accessToken, ticketId, { status });
+    const updated = await ticketsApi.update(idToken, ticketId, { status });
     setTickets((prev) => prev.map((t) => (t.id === ticketId ? updated : t)));
   };
 

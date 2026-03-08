@@ -10,6 +10,7 @@ export interface AuthUser {
   name: string;
   email: string;
   role: Role;
+  idToken: string;   // used for API Gateway Cognito authorizer
   accessToken: string;
 }
 
@@ -41,6 +42,7 @@ function buildAuthUser(tokens: TokenStore): AuthUser {
     name: (id.name ?? id.email) as string,
     email: id.email as string,
     role: roleFromGroups(groups),
+    idToken: tokens.idToken,
     accessToken: tokens.accessToken,
   };
 }

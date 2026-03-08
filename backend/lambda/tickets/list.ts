@@ -3,6 +3,7 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient, ScanCommand, QueryCommand } from '@aws-sdk/lib-dynamodb';
 
 const client = DynamoDBDocumentClient.from(new DynamoDBClient({}));
+const CORS = { 'Access-Control-Allow-Origin': '*' };
 
 export const handler: APIGatewayProxyHandler = async (event) => {
   const { status, submittedBy, assignedTo } = event.queryStringParameters ?? {};
@@ -10,7 +11,6 @@ export const handler: APIGatewayProxyHandler = async (event) => {
   let items;
 
   if (status) {
-    // Query by status GSI (e.g. all open tickets for marketplace)
     const result = await client.send(new QueryCommand({
       TableName: process.env.TICKETS_TABLE!,
       IndexName: 'status-index',
@@ -20,7 +20,6 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     }));
     items = result.Items;
   } else if (submittedBy) {
-    // Query tickets posted by a specific user
     const result = await client.send(new QueryCommand({
       TableName: process.env.TICKETS_TABLE!,
       IndexName: 'submittedBy-index',
@@ -29,7 +28,6 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     }));
     items = result.Items;
   } else if (assignedTo) {
-    // Query tickets claimed by a specific tech
     const result = await client.send(new QueryCommand({
       TableName: process.env.TICKETS_TABLE!,
       IndexName: 'assignedTo-index',
@@ -38,10 +36,9 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     }));
     items = result.Items;
   } else {
-    // Admin: full scan
     const result = await client.send(new ScanCommand({ TableName: process.env.TICKETS_TABLE! }));
     items = result.Items;
   }
 
-  return { statusCode: 200, body: JSON.stringify(items ?? []) };
+  return { statusCode: 200, headers: CORS, body: JSON.stringify(items ?? []) };
 };
