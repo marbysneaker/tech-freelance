@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { signUp, confirmSignUp } from '../lib/auth';
 
@@ -9,8 +9,10 @@ const ROLE_ROUTES = { user: '/dashboard', admin: '/admin', tech: '/tech' } as co
 export default function LoginPage() {
   const { login } = useApp();
   const navigate = useNavigate();
+  const location = useLocation();
+  const initialView = (location.state as { view?: View } | null)?.view ?? 'login';
 
-  const [view, setView] = useState<View>('login');
+  const [view, setView] = useState<View>(initialView);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

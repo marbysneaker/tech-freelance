@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AppProvider, useApp } from './context/AppContext';
 import { NavBar } from './components/NavBar';
+import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import UserDashboard from './pages/UserDashboard';
 import AdminDashboard from './pages/AdminDashboard';
@@ -11,8 +12,8 @@ import './App.css';
 function ProtectedRoute({ role, children }: { role: Role; children: React.ReactNode }) {
   const { currentUser, loading } = useApp();
   if (loading) return null;
-  if (!currentUser) return <Navigate to="/" />;
-  if (currentUser.role !== role) return <Navigate to="/" />;
+  if (!currentUser) return <Navigate to="/login" />;
+  if (currentUser.role !== role) return <Navigate to="/login" />;
   return <>{children}</>;
 }
 
@@ -21,7 +22,8 @@ function AppRoutes() {
     <>
       <NavBar />
       <Routes>
-        <Route path="/" element={<LoginPage />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<LoginPage />} />
         <Route path="/dashboard" element={<ProtectedRoute role="user"><UserDashboard /></ProtectedRoute>} />
         <Route path="/admin" element={<ProtectedRoute role="admin"><AdminDashboard /></ProtectedRoute>} />
         <Route path="/tech" element={<ProtectedRoute role="tech"><TechDashboard /></ProtectedRoute>} />
